@@ -2,15 +2,16 @@
     <div class="create_transaction">
         <div class="field">
             <label>{{label_value}}</label>
-            <input type="number" v-model="value" />
+            <!--<input type="number" step="0.01" v-model="value" />-->
+            <money v-model="value" v-bind="money"></money>
         </div>
-        <div class="field">
+        <div v-if="action!='preview'" class="field">
             <label>{{label_description}}</label>
             <input type="text" v-model="label" />
         </div>
         <div class="field">
             <button class="button button--secondary" @click="$router.push('/')">Voltar</button>
-            <button :class="{'button--green': action=='in', 'button--red': action=='out'}" class="button" @click="create_transaction()">{{label_button}}</button>
+            <button :class="{'button--green': action=='in', 'button--red': action=='out', 'button--blue': action=='preview'}" class="button" @click="create_transaction()">{{label_button}}</button>
         </div>
     </div>
 </template>
@@ -18,11 +19,20 @@
 <script>
     export default {
         name: "CreateTransaction",
+
         data() {
             return {
                 action: '',
                 value: 0.00,
                 label: "",
+                money: {
+                    decimal: '.',
+                    thousands: ',',
+                    prefix: '$ ',
+                    suffix: '',
+                    precision: 2,
+                    masked: false
+                },
                 labels: {
                     in: {
                         button: 'Ganhar',
@@ -33,6 +43,11 @@
                         button: 'Comprar',
                         value_text: 'Quanto você gastou?',
                         description_text: 'O que você comprou?'
+                    },
+                    preview: {
+                        button: 'Quanto sobra?',
+                        value_text: 'Quanto custa?',
+                        description_text: ''
                     }
                 }
             }
@@ -54,10 +69,15 @@
 
         methods: {
             create_transaction() {
-                this.$store.commit("addTransaction", {
-                    label: this.label,
-                    amount: (parseFloat(this.value) * 100).toFixed(0) * (this.action == 'in' ? 1 : -1)
-                });
+                if(this.action=='preview') {
+                    this.$store.commit('setPreview', (parseFloat(this.value) * 100).toFixed(0) * -1);
+                } else {
+                    this.$store.dispatch("addTransaction", {
+                        label: this.label,
+                        amount: (parseFloat(this.value) * 100).toFixed(0) * (this.action == 'in' ? 1 : -1)
+                    });
+                }
+
 
                 this.$router.push('/');
             }
@@ -116,6 +136,11 @@
 
         &--red {
             background-color: #DA1900;
+            color: #fff;
+        }
+
+        &--blue {
+            background-color: #4A90E2;
             color: #fff;
         }
     }

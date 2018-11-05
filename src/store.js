@@ -13,13 +13,27 @@ const vuexPersist = new VuexPersist({
 export default new Vuex.Store({
     plugins: [vuexPersist.plugin],
     state: {
-        budget: 55000,
-        transactions: [{label: 'Saldo inicial', amount: 55000}, {label: 'Brinquedo', amount: -3900}],
+        budget: 0,
+        transactions: [],
+        preview: 0
     },
     mutations: {
         addTransaction(state, payload) {
             state.transactions.push(payload);
         },
+
+        setBudget(state, newBudget) {
+            state.budget = newBudget;
+        },
+
+        setTransactions(state, newArrayBalance) {
+            state.transactions = newArrayBalance;
+        },
+
+        setPreview(state, previewValue) {
+            state.preview = previewValue;
+        },
+
         deleteTransaction(state, index) {
             state.transactions = [
                 ...state.transactions.slice(0, index),
@@ -28,7 +42,12 @@ export default new Vuex.Store({
         }
     },
     actions: {
-
+        addTransaction({commit, getters, state}, payload) {
+            commit('addTransaction', payload);
+            if(getters.balance > state.budget) {
+                commit('setBudget', getters.balance);
+            }
+        }
     },
     getters: {
         balance: state => {

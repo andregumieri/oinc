@@ -1,5 +1,8 @@
 <template>
-    <span>{{str_amount}}</span>
+    <span>
+        <span class="value">{{str_amount.split(".")[0]}}</span>
+        <span class="cents">.{{str_amount.split(".")[1]}}</span>
+    </span>
 </template>
 
 <script>
@@ -20,5 +23,7 @@
 </script>
 
 <style scoped>
-
+    .cents {
+        font-size: 0.7em;
+    }
 </style>

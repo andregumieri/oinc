@@ -3,12 +3,11 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 import CreateTransaction from './views/CreateTransaction.vue'
 import ListTransactions from './views/ListTransactions.vue'
+import Settings from './views/Settings.vue'
 
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
-  base: process.env.BASE_URL,
   routes: [
     {
       path: '/',
@@ -19,6 +18,11 @@ export default new Router({
           path: '/transactions',
           name: 'list_transactions',
           component: ListTransactions
+      },
+      {
+          path: '/settings',
+          name: 'settings',
+          component: Settings
       },
     {
       path: '/transaction/:action',
